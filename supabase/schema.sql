@@ -92,43 +92,70 @@ ALTER TABLE day_schedules ENABLE ROW LEVEL SECURITY;
 ALTER TABLE default_schedules ENABLE ROW LEVEL SECURITY;
 ALTER TABLE disabled_slots ENABLE ROW LEVEL SECURITY;
 
--- Services: public read, admin write
-CREATE POLICY "Services are viewable by everyone" ON services
+-- SERVICES: semua bisa baca, admin bisa edit
+CREATE POLICY "services_select_all" ON services
   FOR SELECT USING (true);
 
-CREATE POLICY "Services are editable by authenticated users" ON services
-  FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "services_insert_auth" ON services
+  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
--- Bookings: public can insert and read their own, admin can do all
-CREATE POLICY "Anyone can create bookings" ON bookings
+CREATE POLICY "services_update_auth" ON services
+  FOR UPDATE USING (auth.role() = 'authenticated');
+
+CREATE POLICY "services_delete_auth" ON services
+  FOR DELETE USING (auth.role() = 'authenticated');
+
+-- BOOKINGS: semua bisa buat & baca & update (untuk cancel), admin bisa delete
+CREATE POLICY "bookings_select_all" ON bookings
+  FOR SELECT USING (true);
+
+CREATE POLICY "bookings_insert_all" ON bookings
   FOR INSERT WITH CHECK (true);
 
-CREATE POLICY "Anyone can view bookings" ON bookings
-  FOR SELECT USING (true);
-
-CREATE POLICY "Authenticated users can update bookings" ON bookings
+CREATE POLICY "bookings_update_all" ON bookings
   FOR UPDATE USING (true);
 
--- Day Schedules: public read, admin write
-CREATE POLICY "Day schedules are viewable by everyone" ON day_schedules
+CREATE POLICY "bookings_delete_auth" ON bookings
+  FOR DELETE USING (auth.role() = 'authenticated');
+
+-- DAY_SCHEDULES: semua bisa baca, admin bisa edit
+CREATE POLICY "day_schedules_select_all" ON day_schedules
   FOR SELECT USING (true);
 
-CREATE POLICY "Day schedules are editable by authenticated users" ON day_schedules
-  FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "day_schedules_insert_auth" ON day_schedules
+  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
--- Default Schedules: public read, admin write
-CREATE POLICY "Default schedules are viewable by everyone" ON default_schedules
+CREATE POLICY "day_schedules_update_auth" ON day_schedules
+  FOR UPDATE USING (auth.role() = 'authenticated');
+
+CREATE POLICY "day_schedules_delete_auth" ON day_schedules
+  FOR DELETE USING (auth.role() = 'authenticated');
+
+-- DEFAULT_SCHEDULES: semua bisa baca, admin bisa edit
+CREATE POLICY "default_schedules_select_all" ON default_schedules
   FOR SELECT USING (true);
 
-CREATE POLICY "Default schedules are editable by authenticated users" ON default_schedules
-  FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "default_schedules_insert_auth" ON default_schedules
+  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
--- Disabled Slots: public read, admin write
-CREATE POLICY "Disabled slots are viewable by everyone" ON disabled_slots
+CREATE POLICY "default_schedules_update_auth" ON default_schedules
+  FOR UPDATE USING (auth.role() = 'authenticated');
+
+CREATE POLICY "default_schedules_delete_auth" ON default_schedules
+  FOR DELETE USING (auth.role() = 'authenticated');
+
+-- DISABLED_SLOTS: semua bisa baca, admin bisa edit
+CREATE POLICY "disabled_slots_select_all" ON disabled_slots
   FOR SELECT USING (true);
 
-CREATE POLICY "Disabled slots are editable by authenticated users" ON disabled_slots
-  FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "disabled_slots_insert_auth" ON disabled_slots
+  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "disabled_slots_update_auth" ON disabled_slots
+  FOR UPDATE USING (auth.role() = 'authenticated');
+
+CREATE POLICY "disabled_slots_delete_auth" ON disabled_slots
+  FOR DELETE USING (auth.role() = 'authenticated');
 
 -- ============================================
 -- INDEXES
