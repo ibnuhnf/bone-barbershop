@@ -17,8 +17,9 @@ export async function GET() {
 
     return NextResponse.json({
       status: 'ok',
-      supabase_url: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'set' : 'NOT SET',
-      supabase_key: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'set' : 'NOT SET',
+      supabase_url: process.env.NEXT_PUBLIC_SUPABASE_URL ? process.env.NEXT_PUBLIC_SUPABASE_URL.trim() : 'NOT SET',
+      supabase_url_length: (process.env.NEXT_PUBLIC_SUPABASE_URL || '').length,
+      supabase_key: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'set (' + process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY.trim().substring(0, 10) + '...)' : 'NOT SET',
       services: {
         count: services?.length || 0,
         error: servicesError?.message || null,
