@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+:root {
+  --color-gold: #C9A96E;
+  --color-dark: #000000;
+  --color-dark-secondary: #111111;
+  --color-dark-card: #1a1a1a;
+  --color-dark-border: #2a2a2a;
+}
+
+body {
+  background-color: #000000;
+  color: #ffffff;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
+
+/* Calendar styles */
+.calendar-day {
+  transition: all 0.2s ease;
+}
+
+.calendar-day:hover:not(.disabled) {
+  transform: scale(1.05);
+}
+
+/* Slot grid */
+.slot-btn {
+  transition: all 0.2s ease;
+}
+
+.slot-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(201, 169, 110, 0.3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease forwards;
+}
