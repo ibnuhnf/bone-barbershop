@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { generateBookingCode } from '@/lib/constants'
+import { generateBookingCode, SERVICES } from '@/lib/constants'
+import { sendTelegramNotification, formatBookingNotification } from '@/lib/telegram'
 
 export async function GET() {
   const supabase = await createClient()
@@ -83,6 +84,20 @@ export async function POST(request: NextRequest) {
       console.error('Booking insert error:', error)
       return NextResponse.json({ error: error.message, detail: error }, { status: 500 })
     }
+
+    // Send Telegram notification to admin (non-blocking)
+    const serviceName = SERVICES.find(s => s.code === serviceId)?.name || serviceId
+    sendTelegramNotification(
+      formatBookingNotification({
+        bookingCode,
+        customerName,
+        customerPhone,
+        serviceName,
+        date,
+        time,
+        notes: customerNotes,
+      })
+    ).catch(() => {}) // Don't fail booking if notification fails
 
     return NextResponse.json({ ...data, booking_code: bookingCode }, { status: 201 })
   } catch (err: unknown) {
