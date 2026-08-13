@@ -6,6 +6,16 @@ import { sendTelegramNotification, formatBookingNotification } from '@/lib/teleg
 export async function GET() {
   const supabase = await createClient()
 
+  // Auto-reject fallback for expired pending bookings
+  await supabase
+    .from('bookings')
+    .update({
+      status: 'rejected',
+      customer_notes: 'Otomatis dibatalkan: slot tidak dikonfirmasi admin dalam 30 menit.',
+    })
+    .eq('status', 'pending')
+    .lt('pending_expires_at', new Date().toISOString())
+
   const { data, error } = await supabase
     .from('bookings')
     .select('*, service:services(*)')
@@ -59,6 +69,9 @@ export async function POST(request: NextRequest) {
     // Generate unique booking code
     const bookingCode = generateBookingCode()
 
+    // Expiration time: 30 minutes from now
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString()
+
     // Create booking - service_id is optional
     const insertData: Record<string, unknown> = {
       booking_code: bookingCode,
@@ -68,6 +81,7 @@ export async function POST(request: NextRequest) {
       customer_phone: customerPhone,
       customer_notes: customerNotes || null,
       status: 'pending',
+      pending_expires_at: expiresAt,
     }
 
     if (bookingServiceId) {

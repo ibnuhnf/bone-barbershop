@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Clock } from 'lucide-react'
+import { Clock, XCircle, CheckCircle2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { id } from 'date-fns/locale'
 import { TimeSlot } from '@/lib/types'
@@ -59,20 +59,42 @@ export default function StepTime({ selectedDate, selectedTime, onSelect }: StepT
               key={slot.time}
               onClick={() => slot.available && onSelect(slot.time)}
               disabled={!slot.available}
-              className={`slot-btn p-4 rounded-xl border text-center transition-all ${
+              className={`slot-btn p-4 rounded-xl border text-center transition-all flex flex-col items-center justify-center relative overflow-hidden ${
                 selectedTime === slot.time
-                  ? 'border-[#C9A96E] bg-[#C9A96E]/20 text-[#C9A96E]'
+                  ? 'border-[#C9A96E] bg-[#C9A96E]/20 text-[#C9A96E] shadow-lg shadow-[#C9A96E]/10'
                   : slot.available
-                  ? 'border-[#2a2a2a] bg-[#1a1a1a] hover:border-[#C9A96E]/50 text-white'
-                  : 'border-[#2a2a2a] bg-[#111111] text-gray-600 cursor-not-allowed'
+                  ? 'border-[#2a2a2a] bg-[#1a1a1a] hover:border-[#C9A96E]/60 text-white'
+                  : 'border-red-500/30 bg-red-950/10 text-gray-500 cursor-not-allowed opacity-75'
               }`}
             >
-              <Clock className={`w-5 h-5 mx-auto mb-2 ${
-                slot.available ? 'text-[#C9A96E]' : 'text-gray-700'
-              }`} />
-              <span className="font-semibold">{slot.time}</span>
-              <p className={`text-xs mt-1 ${slot.available ? 'text-green-500' : 'text-red-400'}`}>
-                {slot.available ? 'Tersedia' : 'Penuh'}
+              {slot.available ? (
+                <Clock
+                  className={`w-5 h-5 mb-2 ${
+                    selectedTime === slot.time ? 'text-[#C9A96E]' : 'text-[#C9A96E]'
+                  }`}
+                />
+              ) : (
+                <XCircle className="w-5 h-5 mb-2 text-red-500/80" />
+              )}
+              <span className={`font-bold ${slot.available ? 'text-white' : 'text-gray-400'}`}>
+                {slot.time}
+              </span>
+              <p
+                className={`text-xs mt-1.5 font-medium flex items-center gap-1 ${
+                  slot.available ? 'text-green-400' : 'text-red-400'
+                }`}
+              >
+                {slot.available ? (
+                  <>
+                    <CheckCircle2 className="w-3 h-3" />
+                    Tersedia
+                  </>
+                ) : (
+                  <>
+                    <XCircle className="w-3 h-3" />
+                    Sudah Dipesan
+                  </>
+                )}
               </p>
             </button>
           ))}
