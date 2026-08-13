@@ -32,6 +32,7 @@ export interface DaySchedule {
 export interface TimeSlot {
   time: string
   available: boolean
+  status: 'available' | 'pending' | 'confirmed' | 'disabled'
 }
 
 export interface DefaultSchedule {

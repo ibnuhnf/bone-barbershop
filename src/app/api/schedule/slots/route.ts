@@ -65,20 +65,27 @@ export async function GET(request: NextRequest) {
 
   const disabledTimes = disabledSlots?.map((s) => s.time) || []
 
-  // Get existing bookings for this date
   const { data: existingBookings } = await supabase
     .from('bookings')
-    .select('booking_time')
+    .select('booking_time, status')
     .eq('booking_date', date)
-    .in('status', ['pending', 'confirmed'])
+    .in('status', ['pending', 'confirmed', 'done'])
 
-  const bookedTimes = existingBookings?.map((b) => b.booking_time) || []
+  // Build slot availability with status
+  const result = slots.map((time) => {
+    const booking = existingBookings?.find(b => b.booking_time === time)
 
-  // Build slot availability
-  const result = slots.map((time) => ({
-    time,
-    available: !disabledTimes.includes(time) && !bookedTimes.includes(time),
-  }))
+    if (disabledTimes.includes(time)) {
+      return { time, available: false, status: 'disabled' }
+    }
+    if (booking) {
+      if (booking.status === 'pending') {
+        return { time, available: false, status: 'pending' }
+      }
+      return { time, available: false, status: 'confirmed' }
+    }
+    return { time, available: true, status: 'available' }
+  })
 
   return NextResponse.json(result)
 }
