@@ -12,15 +12,19 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Date required' }, { status: 400 })
   }
 
-  // Auto-reject expired pending bookings so slots free up
-  await supabase
-    .from('bookings')
-    .update({
-      status: 'rejected',
-      customer_notes: 'Otomatis dibatalkan: slot tidak dikonfirmasi admin dalam 30 menit.',
-    })
-    .eq('status', 'pending')
-    .lt('pending_expires_at', new Date().toISOString())
+  // Auto-reject expired pending bookings so slots free up (safe before migration)
+  try {
+    await supabase
+      .from('bookings')
+      .update({
+        status: 'rejected',
+        customer_notes: 'Otomatis dibatalkan: slot tidak dikonfirmasi admin dalam 30 menit.',
+      })
+      .eq('status', 'pending')
+      .lt('pending_expires_at', new Date().toISOString())
+  } catch {
+    // Column may not exist yet; ignore so app keeps working
+  }
 
   const dayOfWeek = getDay(new Date(date))
 

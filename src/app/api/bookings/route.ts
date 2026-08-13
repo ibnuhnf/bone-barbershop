@@ -6,15 +6,19 @@ import { sendTelegramNotification, formatBookingNotification } from '@/lib/teleg
 export async function GET() {
   const supabase = await createClient()
 
-  // Auto-reject fallback for expired pending bookings
-  await supabase
-    .from('bookings')
-    .update({
-      status: 'rejected',
-      customer_notes: 'Otomatis dibatalkan: slot tidak dikonfirmasi admin dalam 30 menit.',
-    })
-    .eq('status', 'pending')
-    .lt('pending_expires_at', new Date().toISOString())
+  // Auto-reject fallback for expired pending bookings (safe before migration)
+  try {
+    await supabase
+      .from('bookings')
+      .update({
+        status: 'rejected',
+        customer_notes: 'Otomatis dibatalkan: slot tidak dikonfirmasi admin dalam 30 menit.',
+      })
+      .eq('status', 'pending')
+      .lt('pending_expires_at', new Date().toISOString())
+  } catch {
+    // Column may not exist yet; ignore so app keeps working
+  }
 
   const { data, error } = await supabase
     .from('bookings')
