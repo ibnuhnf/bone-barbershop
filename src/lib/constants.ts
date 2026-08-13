@@ -38,8 +38,8 @@ export const SERVICES: Omit<Service, 'id' | 'is_active'>[] = [
   },
 ]
 
-export const DEFAULT_OPEN_TIME = '09:00'
-export const DEFAULT_CLOSE_TIME = '17:00'
+export const DEFAULT_OPEN_TIME = '10:00'
+export const DEFAULT_CLOSE_TIME = '22:00'
 export const SLOT_INTERVAL_MINUTES = 60
 
 export const DAYS_OF_WEEK = [
